@@ -1,14 +1,14 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, useComputed$, useSignal, useTask$ } from "@builder.io/qwik";
 
 interface Props {
-    id:   number;
+    id:   number | string;
     size?: number;
-    backImage: boolean;
-    isVisible: boolean;
+    backImage?: boolean;
+    isVisible?: boolean;
 }
 
 
-export const PokemonImage = component$( ( { id, size = 200, backImage = false, isVisible = false }: Props ) => {
+export const PokemonImage = component$( ( { id, size = 200, backImage = false, isVisible = true }: Props ) => {
 
     const imageLoaded = useSignal(false);
     
@@ -17,14 +17,19 @@ export const PokemonImage = component$( ( { id, size = 200, backImage = false, i
         imageLoaded.value = false;
     });
 
-    let back = backImage? 'back/' : '';
+    const imageUrl = useComputed$( () => {
+        return (backImage) 
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+    });
+
 
     return (
         <div class="flex items-center justify-center"
              style={{ width: `${size}px`, height: `${size}px`}}>
             { !imageLoaded.value && (<span>Loading...</span>) }
             <img 
-                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${back}${id}.png`}  
+                src={imageUrl.value}  
                 alt="Pokemon Sprite" 
                 style={{ width: `${ size }px` }}
                 onLoad$={ () => {
@@ -35,9 +40,8 @@ export const PokemonImage = component$( ( { id, size = 200, backImage = false, i
                 }}
                 class={[{
                     'hidden': !imageLoaded.value,
-                    'brightness-0': !isVisible},
-                    'transition-all'
-                ]}
+                    'brightness-0': !isVisible
+                }, 'transition-all' ]}
             />
         </div>
     )
