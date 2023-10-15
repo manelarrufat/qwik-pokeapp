@@ -30,7 +30,7 @@ export default component$(() => {
     <>
       <span class="text-2xl">Buscador simple</span>
 
-      <span class="text-9xl">{ pokemonId }</span>
+      <span class="text-9xl">{ pokemonId.value }</span>
 
       {/* <Link href={`/pokemon/${ pokemonId.value }/`}></Link> */}
       <div onClick$={ () => goToPokemon(pokemonId.value) }>
